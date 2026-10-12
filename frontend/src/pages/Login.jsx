@@ -30,21 +30,6 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [quickFillActive, setQuickFillActive] = useState('');
-
-  const { login } = useAuth();
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  const redirectPath = location.state?.from?.pathname || '/';
-
-  const handleQuickFill = (type, fillEmail, fillPass) => {
-    setEmail(fillEmail);
-    setPassword(fillPass);
-    setError('');
-    setQuickFillActive(type);
-    setTimeout(() => setQuickFillActive(''), 1500);
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -194,40 +179,6 @@ const Login = () => {
                 </motion.div>
               )}
 
-              {/* Quick-Fill Pill Bar (Điền nhanh tài khoản mẫu) */}
-              <div className="mb-6 p-3 rounded-xl bg-slate-950/70 border border-slate-800/80">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-[11px] font-semibold uppercase tracking-wider text-gray-400 flex items-center gap-1.5">
-                    <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                    Điền nhanh tài khoản thử nghiệm:
-                  </span>
-                  {quickFillActive && (
-                    <span className="text-[11px] text-emerald-400 font-medium animate-pulse">
-                      ✓ Đã điền {quickFillActive}!
-                    </span>
-                  )}
-                </div>
-                <div className="grid grid-cols-2 gap-2">
-                  <button
-                    type="button"
-                    onClick={() => handleQuickFill('Admin', 'khoi@kvault.dev', 'Admin@KVault2026')}
-                    className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-slate-800/80 hover:bg-slate-700/80 border border-cyan-500/30 hover:border-cyan-400 text-xs text-cyan-300 font-medium transition-all group cursor-pointer shadow-sm"
-                  >
-                    <KeyRound className="w-3.5 h-3.5 text-cyan-400 group-hover:scale-110 transition-transform" />
-                    <span>Admin (Khôi)</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => handleQuickFill('Demo User', 'demo@kvault.dev', 'Demo@123')}
-                    className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 hover:border-slate-600 text-xs text-gray-300 font-medium transition-all group cursor-pointer shadow-sm"
-                  >
-                    <UserCheck className="w-3.5 h-3.5 text-emerald-400 group-hover:scale-110 transition-transform" />
-                    <span>Demo Member</span>
-                  </button>
-                </div>
-              </div>
-
               {/* Form Input */}
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
@@ -242,7 +193,7 @@ const Login = () => {
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      placeholder="khoi@kvault.dev hoặc your@email.com"
+                      placeholder="name@example.com"
                       required
                       autoComplete="email"
                       className="input-field !pl-10 !py-2.5 text-sm"
