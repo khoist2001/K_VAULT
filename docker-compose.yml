@@ -1,0 +1,89 @@
+# =============================================================
+# K-VAULT - Docker Compose Configuration
+# Curated Digital Tools & Software by Khôi
+# =============================================================
+# Chạy: docker-compose up --build
+# Dừng: docker-compose down
+# Xóa dữ liệu: docker-compose down -v
+# =============================================================
+
+services:
+  # ─────────────────────────────────────────────
+  # MongoDB Database
+  # ─────────────────────────────────────────────
+  mongo:
+    image: mongo:7
+    container_name: kvault-mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: kvault_admin
+      MONGO_INITDB_ROOT_PASSWORD: KVault_S3cur3_Pass2026
+      MONGO_INITDB_DATABASE: kvault
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - kvault-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ─────────────────────────────────────────────
+  # Backend API (Node.js + Express)
+  # ─────────────────────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: kvault-backend
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      NODE_ENV: production
+      PORT: 5000
+      MONGO_URI: mongodb://kvault_admin:KVault_S3cur3_Pass2026@mongo:27017/kvault?authSource=admin
+      JWT_SECRET: KV@ult_Jwt_Sup3r_S3cr3t_K3y_2026_By_Khoi!
+      JWT_EXPIRES_IN: 7d
+      FRONTEND_URL: http://localhost:3000
+      ADMIN_EMAIL: khoi@kvault.dev
+      ADMIN_PASSWORD: Admin@KVault2026
+      ADMIN_USERNAME: Khôi
+    depends_on:
+      mongo:
+        condition: service_healthy
+    volumes:
+      - uploads_data:/app/uploads
+    networks:
+      - kvault-network
+
+  # ─────────────────────────────────────────────
+  # Frontend (React + Vite + Nginx)
+  # ─────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: http://localhost:5000/api
+    container_name: kvault-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - kvault-network
+
+volumes:
+  mongo_data:
+    driver: local
+  uploads_data:
+    driver: local
+
+networks:
+  kvault-network:
+    driver: bridge
