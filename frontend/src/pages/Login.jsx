@@ -31,6 +31,12 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  const { login } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const redirectPath = location.state?.from?.pathname || '/';
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
