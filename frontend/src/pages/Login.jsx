@@ -45,9 +45,9 @@ const Login = () => {
       await login(email.trim(), password);
       navigate(redirectPath, { replace: true });
     } catch (err) {
-      setError(
-        err.response?.data?.message || 'Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.'
-      );
+      console.error('LOGIN_ERROR:', err);
+      const msg = err.response?.data?.message || err.message || 'Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.';
+      setError(msg);
     } finally {
       setLoading(false);
     }
