@@ -43,28 +43,15 @@ app.use(helmet({
   crossOriginResourcePolicy: { policy: 'cross-origin' },
 }));
 
-// CORS
-const allowedOrigins = [
-  process.env.FRONTEND_URL,
-  'https://khoiyi.io.vn',
-  'http://khoiyi.io.vn',
-  'https://www.khoiyi.io.vn',
-  'http://localhost:3000',
-  'http://localhost:5173',
-].filter(Boolean);
-
+// CORS - Cho phép tất cả các nguồn truy cập
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (!origin) return callback(null, true);
-      if (allowedOrigins.includes(origin) || origin.endsWith('khoiyi.io.vn')) {
-        return callback(null, true);
-      }
-      return callback(null, true);
+      callback(null, true);
     },
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
   })
 );
 
